@@ -36,6 +36,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	humanize "github.com/dustin/go-humanize"
 	"github.com/juju/errors"
 )
 
@@ -94,6 +95,9 @@ func init() {
 
 	RegisterFilter("float", filterFloat)     // pongo-specific
 	RegisterFilter("integer", filterInteger) // pongo-specific
+
+	RegisterFilter("floatComma", filterFloatComma)
+	RegisterFilter("integerComma", filterIntegerComma)
 }
 
 func filterTruncatecharsHelper(s string, newLen int) string {
@@ -924,4 +928,19 @@ func filterYesno(in *Value, param *Value) (*Value, *Error) {
 
 	// no
 	return AsValue(choices[1]), nil
+}
+
+func filterFloatComma(in *Value, param *Value) (*Value, *Error) {
+	val := in.Float()
+	valWithComma := humanize.Commaf(val)
+
+	return AsValue(valWithComma), nil
+
+}
+
+func filterIntegerComma(in *Value, param *Value) (*Value, *Error) {
+	val := in.Integer()
+	valWithComma := humanize.Comma(int64(val))
+
+	return AsValue(valWithComma), nil
 }
